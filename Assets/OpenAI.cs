@@ -23,7 +23,7 @@ public class OpenAI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        api = new OpenAIAPI("YOUR-API-KEY");
+        api = new OpenAIAPI("YOUR_API_KEY");
         StartConversation();
         submitButton.onClick.AddListener(() => GetResponse());
     }

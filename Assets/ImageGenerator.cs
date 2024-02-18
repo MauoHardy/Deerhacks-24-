@@ -35,7 +35,7 @@ using UnityEngine.Networking;
         static async Task generator(ImageTesting imageTesting, string prompt )
         {
             // Your OpenAI API key
-            string apiKey = "YOUR-API-KEY";
+            string apiKey = "YOUR_API_KEY";
 
             // API URL for image generation
             string apiUrl = "https://api.openai.com/v1/images/generations";
