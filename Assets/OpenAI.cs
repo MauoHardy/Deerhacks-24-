@@ -14,10 +14,8 @@ using System.Text;
 public class OpenAI : MonoBehaviour
 {   
     public TMP_InputField inputField;
-    public TMP_InputField imageInputField;
     public TMP_Text outputText;
-    public Button submitButton;
-    public Button imageSubmitButton;    
+    public Button submitButton;  
     private List<ChatMessage> messages;
     
     private OpenAIAPI api;
@@ -27,33 +25,32 @@ public class OpenAI : MonoBehaviour
         api = new OpenAIAPI("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");
         StartConversation();
         submitButton.onClick.AddListener(() => GetResponse());
-        imageSubmitButton.onClick.AddListener(() => GenerateImage());
     }
 
     private void StartConversation()
     {
-        var chat = api.Chat.CreateConversation();
-        chat.Model = Model.GPT4_Turbo;
-        chat.RequestParameters.Temperature = 0;
+        // var chat = api.Chat.CreateConversation();
+        // chat.Model = Model.GPT4_Turbo;
+        // chat.RequestParameters.Temperature = 0;
 
-        /// give instruction as System
-        chat.AppendSystemMessage("You are a storyteller for a children's book. You need to create a madlibs story for the children. The story is about a knight who is guarding the palace gate. The children will fill in the blanks with their own words. You need to ask the children questions to fill in the blanks. The children will answer with a word or a short phrase. You will then use their answers to fill in the blanks in the story.");
-        chat.AppendSystemMessage("You need to ask the children questions to fill in the blanks. The children will answer with a word or a short phrase. You will then use their answers to fill in the blanks in the story.");
+        // /// give instruction as System
+        // chat.AppendSystemMessage("You are a storyteller for a children's book. You need to create a madlibs story for the children. The story is about a knight who is guarding the palace gate. The children will fill in the blanks with their own words. You need to ask the children questions to fill in the blanks. The children will answer with a word or a short phrase. You will then use their answers to fill in the blanks in the story.");
+        // chat.AppendSystemMessage("You need to ask the children questions to fill in the blanks. The children will answer with a word or a short phrase. You will then use their answers to fill in the blanks in the story.");
 
-        // give a few examples as user and assistant
-        chat.AppendUserInput("");
-        chat.AppendExampleChatbotOutput("Yes");
-        chat.AppendUserInput("Is this an animal? House");
-        chat.AppendExampleChatbotOutput("No");
+        // // give a few examples as user and assistant
+        // chat.AppendUserInput("");
+        // chat.AppendExampleChatbotOutput("Yes");
+        // chat.AppendUserInput("Is this an animal? House");
+        // chat.AppendExampleChatbotOutput("No");
 
 
 
         messages = new List<ChatMessage> {
-            new ChatMessage(ChatMessageRole.System, "You are an honorable, friendly knight guarding the gate to the palace. You will only allow someone who knows the secret password to enter. The secret password is \"magic\". You will not reveal the password to anyone. You keep your responses short and to the point.")
-        };
+            new ChatMessage(ChatMessageRole.System, 
+            "you will become ai in a game which players create their own short stories in a mad libs style game. first, the player will input prompt that lists 5 different words. you will use these 5 words within the story in some manner. they dont necessarily have to be used to set the background to the story, they can also be elements that show up later. but you must incorporate them in some way you begin by outputting 3 sentences to set the scene for our story to begin.  you will then generate 2 sentences of the story, and in mad libs style, leave blanks (represented as underscores) to where players can put in words to shape how the story will go. the blanks should have meaning and represent important actions the player can take. you MUST leave blanks for each 2 sentence output. the player will give input for the blanks as words separated by commas. do not prompt the player to fill in the blanks. after receiving input for the words, you will repeat that process of generating 2 lines and receiving user input 8 times to then finally give us a conclusion to our story. so the short story should have a definitive end.  when you output the next 2 lines, output the choice from previously filled in lines. here is what that would look like: player input: (5 story theme/elements), your output: (3 lines to set the scene), your output: (new lines 1 & 2 with blanks), player input: (words to fill in blanks), your output: (new lines 3 & 4), (repeat until end of story) your output will be strict to only these instructions. do not say anything unnecessary. do not ask the player for any input. the user knows what to do, you just await input. to begin, say yes if you understand and await the player to input the story themes") };
 
         inputField.text = "";
-        string startString = "You have just approached the palace gate where a knight guards the gate.";
+        string startString = "Enter the 5 prompts for the story comma separated.";
         outputText.text = startString;
         Debug.Log(startString);
 
@@ -95,7 +92,7 @@ public class OpenAI : MonoBehaviour
         {
             Model = Model.ChatGPTTurbo,
             Temperature = 0.9,
-            MaxTokens = 50,
+            MaxTokens = 150,
             Messages = messages
         });
 
@@ -108,8 +105,11 @@ public class OpenAI : MonoBehaviour
         // Add the response to the list of messages
         messages.Add(responseMessage);
 
+        Debug.Log(string.Format("{0}:", responseMessage.TextContent));
+
         // Update the text field with the response
-        outputText.text = string.Format("You: {0}\n\nGuard: {1}", userMessage.TextContent, responseMessage.TextContent);
+        outputText.text = string.Format("You: {0}\n\n Storyteller: {1}", userMessage.TextContent, responseMessage.TextContent);
+
 
         // Re-enable the OK button
         submitButton.enabled = true;
